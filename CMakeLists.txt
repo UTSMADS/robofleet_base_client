@@ -13,6 +13,7 @@ list(APPEND Libs Qt5::Core Qt5::WebSockets)
 
 INCLUDE_DIRECTORIES(robofleet_client_lib)
 INCLUDE_DIRECTORIES(robofleet_client_lib/include)
+INCLUDE_DIRECTORIES(../include)
 ADD_SUBDIRECTORY(robofleet_client_lib)
 add_executable(client src/main.cpp)
 add_subdirectory(src)
