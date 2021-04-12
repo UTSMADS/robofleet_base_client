@@ -8,11 +8,17 @@
 #include <thread>
 #include <unordered_map>
 #include <iostream>
-
+#include <chrono>
+#include <thread>
+#include <iostream>
+ 
 #include "decode.hpp"
 #include "encode.hpp"
 
 #include "elevator_interface.hpp"
+
+#include "decode_elevator.hpp"
+#include "encode_elevator.hpp"
 
 // Some sample structs are in this header file.
 #include "message_structs.h"
@@ -95,6 +101,19 @@ class ClientNode : public QObject {
     if (verbosity_ > 1) {
       std::cout << "Received message" << std::endl;
     }
+
+    const auto* root =
+          flatbuffers::GetRoot<typename flatbuffers_type_for<ElevatorCommand>::type>(
+              data.data());
+    const ElevatorCommand msg = decode<ElevatorCommand>(root);
+
+    if (msg.floor_cmd > 0) {
+      pressFloorButton(msg.floor_cmd);
+    }
+
+    if (msg.hold_door) {
+      holdDoorOpen();
+    }
   }
 
   /**
@@ -107,12 +126,18 @@ class ClientNode : public QObject {
       std::cout << "Websocket connection established." << std::endl;
     }
 
-    // As an example, we construct a "RobofleetSubscription" message here to get status data from all robots from the Robofleet Server
     RobofleetSubscription s;
-    s.topic_regex = "kavan/status";
+    s.topic_regex = "elevator/command";
     s.action = 1;
 
     encode_msg(s, "RobofleetSubscription", "subscriptions");
+    std::chrono::seconds interval( 1 );
+    while(true) {
+      ElevatorStatus status;
+      updateElevatorStatus(status);
+      encode_msg(status, "ElevatorStatus", "elevator/status");
+      std::this_thread::sleep_for( interval );
+    }
   }
 
  public:
