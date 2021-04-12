@@ -12,6 +12,8 @@
 #include "decode.hpp"
 #include "encode.hpp"
 
+#include "elevator_interface.hpp"
+
 // Some sample structs are in this header file.
 #include "message_structs.h"
 
