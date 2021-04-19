@@ -1,5 +1,4 @@
 #pragma once
-
 #include <flatbuffers/flatbuffers.h>
 #include <schema_generated.h>
 
@@ -12,11 +11,7 @@
 #include <thread>
 #include <iostream>
  
-#include "decode.hpp"
-#include "encode.hpp"
-
 #include "elevator_interface.hpp"
-
 #include "decode_elevator.hpp"
 #include "encode_elevator.hpp"
 

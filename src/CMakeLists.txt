@@ -4,4 +4,6 @@ PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/WsClient.hpp
     ${CMAKE_CURRENT_LIST_DIR}/ClientNode.hpp
     ${CMAKE_CURRENT_LIST_DIR}/MessageScheduler.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/decode_elevator.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/encode_elevator.hpp
 )

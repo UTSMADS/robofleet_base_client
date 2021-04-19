@@ -1,5 +1,7 @@
+#pragma once
+#ifndef _DECODE_ELEVATOR_HPP
+#define _DECODE_ELEVATOR_HPP
 #include "decode.hpp"
-#include "elevator_interface.hpp"
 
 template <>
 struct flatbuffers_type_for<ElevatorCommand> {
@@ -13,3 +15,5 @@ ElevatorCommand decode(
   dst.hold_door = src->hold_door();
   return dst;
 }
+
+#endif

@@ -1,4 +1,6 @@
-#include "elevator_interface.hpp"
+#pragma once
+#ifndef _ENCODE_ELEVATOR_HPP
+#define _ENCODE_ELEVATOR_HPP
 #include "encode.hpp"
 
 // amrl_msgs/ElevatorStatus
@@ -9,3 +11,5 @@ flatbuffers::uoffset_t encode(
              fbb, metadata, msg.floor, msg.door)
       .o;
 }
+
+#endif
