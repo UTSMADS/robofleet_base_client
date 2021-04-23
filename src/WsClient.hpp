@@ -74,7 +74,10 @@ class WsClient : public QObject {
 
   void send_message(const QByteArray& data) {
     ++msg_index;
-    ws.sendBinaryMessage(data);
+    uint64_t sent = ws.sendBinaryMessage(data);
+    if (sent != data.size()) {
+      printf("Sent incomplete message, %lld of %d bytes\n", sent, data.size());
+    }
     send_ping();
   }
 

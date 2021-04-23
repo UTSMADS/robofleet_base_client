@@ -1,6 +1,7 @@
 #pragma once
 #ifndef _ENCODE_ELEVATOR_HPP
 #define _ENCODE_ELEVATOR_HPP
+#include "elevator_interface.h"
 #include "encode.hpp"
 
 // amrl_msgs/ElevatorStatus

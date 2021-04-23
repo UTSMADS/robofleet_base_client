@@ -1,6 +1,7 @@
 #pragma once
 #ifndef _DECODE_ELEVATOR_HPP
 #define _DECODE_ELEVATOR_HPP
+#include "elevator_interface.h"
 #include "decode.hpp"
 
 template <>

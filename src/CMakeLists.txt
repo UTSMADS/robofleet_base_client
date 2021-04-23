@@ -6,4 +6,5 @@ PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/MessageScheduler.hpp
     ${CMAKE_CURRENT_LIST_DIR}/decode_elevator.hpp
     ${CMAKE_CURRENT_LIST_DIR}/encode_elevator.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/elevator_interface.cpp
 )

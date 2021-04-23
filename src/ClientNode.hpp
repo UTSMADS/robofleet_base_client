@@ -3,6 +3,7 @@
 #include <schema_generated.h>
 
 #include <QObject>
+#include <QThread>
 #include <chrono>
 #include <thread>
 #include <unordered_map>
@@ -11,9 +12,14 @@
 #include <thread>
 #include <iostream>
  
-#include "elevator_interface.hpp"
-#include "decode_elevator.hpp"
-#include "encode_elevator.hpp"
+#include "elevator_interface.h"
+
+// #include "decode_elevator.hpp"
+// #include "encode_elevator.hpp"
+
+#include "encode.hpp"
+#include "decode.hpp"
+
 
 // Some sample structs are in this header file.
 #include "message_structs.h"
@@ -23,17 +29,11 @@ class ClientNode : public QObject {
 
   struct TopicParams {
     double priority;
+    double rate_limit;
     bool no_drop;
   };
 
   // In a complete client, we expect the following maps to be populated from configuration.
-  // Map from topic name to pair of <last publication time, publication
-  // interval?(sec)>
-  std::unordered_map<
-      std::string,
-      std::pair<
-          std::chrono::time_point<std::chrono::high_resolution_clock>, double>>
-      rate_limits;
   // Map from topic names to more detailed params like priority, etc.
   std::unordered_map<std::string, TopicParams> topic_params;
 
@@ -51,22 +51,6 @@ class ClientNode : public QObject {
   template <typename T>
   void encode_msg(
       const T& msg, const std::string& msg_type, const std::string& topic) {
-    // check rate limits
-    if (rate_limits.count(topic)) {
-      auto& rate_info = rate_limits[topic];
-      const auto curr_time = std::chrono::high_resolution_clock::now();
-      const auto duration =
-          std::chrono::duration_cast<std::chrono::milliseconds>(
-              curr_time - rate_info.first);
-      const double elapsed_sec = duration.count() / 1000.0;
-
-      if (elapsed_sec > rate_info.second) {
-        rate_info.first = curr_time;
-      } else {
-        return;
-      }
-    }
-
     // encode message
     flatbuffers::FlatBufferBuilder fbb;
     auto metadata = encode_metadata(fbb, msg_type, topic);
@@ -78,14 +62,17 @@ class ClientNode : public QObject {
     Q_EMIT message_encoded(
         QString::fromStdString(topic),
         data,
-        params.priority,
-        params.no_drop);
+        1.0,
+        1.0,
+        false);
   }
 
  Q_SIGNALS:
   void message_encoded(
-      const QString& topic, const QByteArray& data, double priority,
+      const QString& topic, const QByteArray& data, double priority, double rate_limit,
       bool no_drop);
+
+  void subscription_complete();
 
  public Q_SLOTS:
   /**
@@ -122,16 +109,20 @@ class ClientNode : public QObject {
     }
 
     RobofleetSubscription s;
-    s.topic_regex = "elevator/command";
+    s.topic_regex = "/elevator/command";
     s.action = 1;
 
     encode_msg(s, "RobofleetSubscription", "subscriptions");
-    std::chrono::seconds interval( 1 );
-    while(true) {
+    Q_EMIT subscription_complete(); 
+  }
+
+  void emitStatus() {
+    forever {
       ElevatorStatus status;
       updateElevatorStatus(status);
-      encode_msg(status, "ElevatorStatus", "elevator/status");
-      std::this_thread::sleep_for( interval );
+      printf("STATUS %d %d\n", status.floor, status.door);
+      encode_msg(status, "amrl_msgs/ElevatorStatus", "/elevator/elevator_status");
+      QThread::sleep(1);
     }
   }
 

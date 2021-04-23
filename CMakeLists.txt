@@ -12,7 +12,7 @@ find_package(Qt5 COMPONENTS Core WebSockets REQUIRED)
 find_library(wiringPi_LIB wiringPi)
 list(APPEND Libs Qt5::Core Qt5::WebSockets ${wiringPi_LIB})
 
-INCLUDE_DIRECTORIES(../include)
+INCLUDE_DIRECTORIES(include)
 INCLUDE_DIRECTORIES(robofleet_client_lib)
 INCLUDE_DIRECTORIES(robofleet_client_lib/include)
 ADD_SUBDIRECTORY(robofleet_client_lib)

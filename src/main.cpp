@@ -10,9 +10,9 @@
 #include "ClientNode.hpp"
 
 // In a complete client, we expect these to be read from configuration
-int max_queue_before_waiting = 1;
+int max_queue_before_waiting = 2;
 int verbosity = 2;
-std::string host_url = "ws://localhost:8080";
+std::string host_url = "ws://10.0.0.1:8080";
 
 void connect_client(
     WsClient& ws_client, 
@@ -40,6 +40,10 @@ void connect_client(
     WsClient& ws_client, 
     ClientNode& client_node,
     MessageScheduler& scheduler) {
+
+  QThread* thread = new QThread;
+  client_node.moveToThread(thread);
+
   // schedule messages
   QObject::connect(
       &client_node,
@@ -73,4 +77,13 @@ void connect_client(
       &WsClient::connected,
       &client_node,
       &ClientNode::connected);
+
+  // status_publishing
+  QObject::connect(
+      &client_node,
+      &ClientNode::subscription_complete,
+      &client_node,
+      &ClientNode::emitStatus);
+  thread->start();
+
 }
