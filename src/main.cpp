@@ -8,6 +8,7 @@
 #include "MessageScheduler.hpp"
 #include "WsClient.hpp"
 #include "ClientNode.hpp"
+#include "elevator_interface.h"
 
 // In a complete client, we expect these to be read from configuration
 int max_queue_before_waiting = 2;
@@ -32,6 +33,8 @@ int main(int argc, char** argv) {
 
     // Set up websocket and scheduler callbacks
     connect_client(ws_client, client_node, scheduler);
+
+    initializeGPIOPins();
 
     return a.exec();
 }

@@ -69,7 +69,7 @@ void holdDoorOpen(){
   } else  {
     status.floor = 0;
   }
-
+  
   if (digitalRead(DOOR_STATUS_OPEN_PIN) == HIGH) {
     status.door = 1;
   } else if (digitalRead(DOOR_STATUS_CLOSED_PIN) == HIGH) {
@@ -77,4 +77,5 @@ void holdDoorOpen(){
   } else {
     status.door = 2;
   }
+  
  }
