@@ -14,11 +14,8 @@
  
 #include "elevator_interface.h"
 
-// #include "decode_elevator.hpp"
-// #include "encode_elevator.hpp"
-
-#include "encode.hpp"
-#include "decode.hpp"
+#include "decode_elevator.hpp"
+#include "encode_elevator.hpp"
 
 
 // Some sample structs are in this header file.
