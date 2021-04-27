@@ -8,6 +8,7 @@
 #include "MessageScheduler.hpp"
 #include "WsClient.hpp"
 #include "ClientNode.hpp"
+#include "StatusNode.hpp"
 #include "elevator_interface.h"
 
 // In a complete client, we expect these to be read from configuration
@@ -18,6 +19,7 @@ std::string host_url = "ws://10.0.0.1:8080";
 void connect_client(
     WsClient& ws_client, 
     ClientNode& client_node,
+    StatusNode& status_node,
     MessageScheduler& scheduler);
 
 int main(int argc, char** argv) {
@@ -30,9 +32,10 @@ int main(int argc, char** argv) {
     
     // Initialize client node
     ClientNode client_node(verbosity);
+    StatusNode status_node(verbosity);
 
     // Set up websocket and scheduler callbacks
-    connect_client(ws_client, client_node, scheduler);
+    connect_client(ws_client, client_node, status_node, scheduler);
 
     initializeGPIOPins();
 
@@ -42,15 +45,22 @@ int main(int argc, char** argv) {
 void connect_client(
     WsClient& ws_client, 
     ClientNode& client_node,
+    StatusNode& status_node,
     MessageScheduler& scheduler) {
 
   QThread* thread = new QThread;
-  client_node.moveToThread(thread);
+  status_node.moveToThread(thread);
 
   // schedule messages
   QObject::connect(
       &client_node,
       &ClientNode::message_encoded,
+      &scheduler,
+      &MessageScheduler::enqueue);
+
+  QObject::connect(
+      &status_node,
+      &StatusNode::message_encoded,
       &scheduler,
       &MessageScheduler::enqueue);
 
@@ -85,8 +95,8 @@ void connect_client(
   QObject::connect(
       &client_node,
       &ClientNode::subscription_complete,
-      &client_node,
-      &ClientNode::emitStatus);
+      &status_node,
+      &StatusNode::emitStatus);
   thread->start();
 
 }

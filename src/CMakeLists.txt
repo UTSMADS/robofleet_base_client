@@ -3,6 +3,7 @@ PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/main.cpp
     ${CMAKE_CURRENT_LIST_DIR}/WsClient.hpp
     ${CMAKE_CURRENT_LIST_DIR}/ClientNode.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/StatusNode.hpp
     ${CMAKE_CURRENT_LIST_DIR}/MessageScheduler.hpp
     ${CMAKE_CURRENT_LIST_DIR}/decode_elevator.hpp
     ${CMAKE_CURRENT_LIST_DIR}/encode_elevator.hpp

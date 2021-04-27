@@ -21,9 +21,8 @@
 // Some sample structs are in this header file.
 #include "message_structs.h"
 
-class ClientNode : public QObject {
+class StatusNode : public QObject {
   Q_OBJECT
-
   const int verbosity_;
 
   /**
@@ -58,54 +57,21 @@ class ClientNode : public QObject {
       const QString& topic, const QByteArray& data, double priority, double rate_limit,
       bool no_drop);
 
-  void subscription_complete();
 
  public Q_SLOTS:
-  /**
-   * @brief Handle a received message here
-   * @param data the Flatbuffer-encoded message data
-   */
-  void message_received(const QByteArray& data) {
-    if (verbosity_ > 1) {
-      std::cout << "Received message" << std::endl;
+  void emitStatus() {
+    forever {
+      ElevatorStatus status;
+      updateElevatorStatus(status);
+      encode_msg(status, "amrl_msgs/ElevatorStatus", "/elevator/elevator_status");
+      QThread::sleep(1);
     }
-
-    const auto* root =
-          flatbuffers::GetRoot<typename flatbuffers_type_for<ElevatorCommand>::type>(
-              data.data());
-    const ElevatorCommand msg = decode<ElevatorCommand>(root);
-
-    if (msg.floor_cmd > 0) {
-      pressFloorButton(msg.floor_cmd);
-    }
-
-    if (msg.hold_door) {
-      holdDoorOpen();
-    }
-  }
-
-  /**
-   * @brief Handle the connection of the websocket
-   *
-   * 
-   */
-  void connected() {
-    if (verbosity_ > 1) {
-      std::cout << "Websocket connection established." << std::endl;
-    }
-
-    RobofleetSubscription s;
-    s.topic_regex = "/elevator/command";
-    s.action = 1;
-
-    encode_msg(s, "RobofleetSubscription", "subscriptions");
-    Q_EMIT subscription_complete(); 
   }
 
  public:
-  ClientNode(int verbosity) : verbosity_(verbosity)  {
+  StatusNode(int verbosity) : verbosity_(verbosity)  {
     if (verbosity_ > 0) {
-      std::cout << "Started Client Node" << std::endl;
+      std::cout << "Started Status Node" << std::endl;
     }
   }
 };
