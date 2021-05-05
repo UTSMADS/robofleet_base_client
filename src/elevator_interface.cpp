@@ -79,3 +79,15 @@ void holdDoorOpen(){
   }
   
  }
+
+ void updateRobofleetStatusFromElevatorStatus(const ElevatorStatus& elevator_status, RobofleetStatus& status){
+  status.is_ok = true;
+  status.status = "OK";
+  if (elevator_status.floor > 0) {
+    status.location = "AHG, Floor " + std::to_string(elevator_status.floor);
+  } else {
+    status.location = "AHG";
+  }
+  
+  status.battery_level = 1;
+ }

@@ -2,6 +2,7 @@
 #ifndef _ENCODE_ELEVATOR_H
 #define _ENCODE_ELEVATOR_H
 #include <wiringPi.h>
+#include <string>
 
 // Declare pins as constants
 const int FL_1_STATUS_PIN = 0;
@@ -14,7 +15,7 @@ const int FL_2_CALL_PIN = 6;
 const int FL_3_CALL_PIN = 5;
 const int DOOR_OPEN_CALL_PIN = 12;
 
-struct ElevatorStatus{
+struct ElevatorStatus {
   // int floor: integer 1 for floor 1, 2 for floor 2, etc. 0 for in between floors.
   int floor;
   // int door_status: integer 1 for open, 0 for closed, and 2 if in between.
@@ -26,9 +27,17 @@ struct ElevatorCommand {
   bool hold_door;
 };
 
+struct RobofleetStatus {
+  std::string status;
+  bool is_ok;
+  float battery_level;
+  std::string location;
+};
+
 void pressFloorButton(int floor);
 void holdDoorOpen();
 void initializeGPIOPins();
 void updateElevatorStatus(ElevatorStatus &status);
+void updateRobofleetStatusFromElevatorStatus(const ElevatorStatus& elevator_status, RobofleetStatus &status);
 
 #endif

@@ -13,4 +13,14 @@ flatbuffers::uoffset_t encode(
       .o;
 }
 
+// amrl_msgs/RobofleetStatus
+template <>
+flatbuffers::uoffset_t encode(
+    FBB& fbb, const RobofleetStatus& msg, const MetadataOffset& metadata) {
+  return fb::amrl_msgs::CreateRobofleetStatusDirect(
+            fbb, metadata, msg.status.c_str(), msg.is_ok, msg.battery_level, msg.location.c_str())
+      .o;
+}
+
+
 #endif

@@ -61,12 +61,16 @@ class StatusNode : public QObject {
  public Q_SLOTS:
   void emitStatus() {
     forever {
-      ElevatorStatus status;
-      updateElevatorStatus(status);
-      encode_msg(status, "amrl_msgs/ElevatorStatus", "/elevator/elevator_status");
+      ElevatorStatus elevator_status;
+      updateElevatorStatus(elevator_status);
+      encode_msg(elevator_status, "amrl_msgs/ElevatorStatus", "/elevator/elevator_status");
+      RobofleetStatus status;
+      updateRobofleetStatusFromElevatorStatus(elevator_status, status);
+      encode_msg(status, "amrl_msgs/RobofleetStatus", "/elevator/status");
       QThread::sleep(1);
     }
   }
+
 
  public:
   StatusNode(int verbosity) : verbosity_(verbosity)  {
